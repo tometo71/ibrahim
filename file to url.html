@@ -2,81 +2,112 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>File to URL Converter</title>
+  <title>File to URL</title>
   <style>
     body {
-      background-color: #0d0d0d;
-      color: #ffffff;
-      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
+      text-align: center;
     }
     h1 {
-      color: #00ffcc;
-      text-shadow: 0 0 10px #00ffcc;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    }
+    .container {
+      background: #1f1f1f;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
+      width: 90%;
+      max-width: 400px;
     }
     input[type="file"] {
-      margin: 20px 0;
-      background: #1a1a1a;
-      color: #fff;
+      margin: 1rem 0;
+      color: #ccc;
+    }
+    input[type="text"] {
+      width: 100%;
       padding: 10px;
-      border-radius: 10px;
       border: none;
+      border-radius: 8px;
+      background-color: #2b2b2b;
+      color: #fff;
+      margin-bottom: 10px;
     }
-    #urlOutput {
-      margin-top: 20px;
-      background-color: #1a1a1a;
-      padding: 10px;
-      border-radius: 10px;
-      word-break: break-all;
-      color: #00ffcc;
-      box-shadow: 0 0 5px #00ffcc;
-    }
-    button.copyBtn {
-      margin-top: 10px;
+    button {
       padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
       background-color: #00ffcc;
       color: #000;
-      border: none;
-      border-radius: 20px;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background-color 0.3s;
     }
-    button.copyBtn:hover {
+    button:hover {
       background-color: #00ccaa;
+    }
+    #outputUrl {
+      word-break: break-all;
+      text-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
     }
   </style>
 </head>
 <body>
-  <h1>File to URL Converter</h1>
-  <input type="file" id="fileInput" />
-  <div id="urlOutput">URL will appear here</div>
-  <button class="copyBtn" onclick="copyURL()">Copy URL</button>  <script>
-    const fileInput = document.getElementById("fileInput");
-    const urlOutput = document.getElementById("urlOutput");
+  <div class="container">
+    <h1>File to URL</h1>
+    <input type="file" id="fileInput" />
+    <input type="text" id="outputUrl" readonly placeholder="Your URL will appear here..." />
+    <div>
+      <button onclick="uploadFile()">Upload</button>
+      <button onclick="copyURL()">Copy URL</button>
+    </div>
+  </div>
+  <script>
+    function uploadFile() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) return alert('Please select a file first.');const formData = new FormData();
+  formData.append('file', file);
 
-    fileInput.addEventListener("change", () => {
-      const file = fileInput.files[0];
-      if (file) {
-        const url = URL.createObjectURL(file);
-        urlOutput.textContent = url;
+  fetch('https://api.anonfiles.com/upload', {
+    method: 'POST',
+    body: formData
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status) {
+        document.getElementById('outputUrl').value = data.data.file.url.full;
+      } else {
+        alert('Upload failed.');
       }
+    })
+    .catch(err => {
+      alert('Error uploading file.');
+      console.error(err);
     });
+}
 
-    function copyURL() {
-      const text = urlOutput.textContent;
-      if (text && text !== 'URL will appear here') {
-        navigator.clipboard.writeText(text).then(() => {
-          alert("URL copied to clipboard!");
-        });
-      }
-    }
-  </script></body>
+function copyURL() {
+  const urlField = document.getElementById('outputUrl');
+  if (urlField.value) {
+    navigator.clipboard.writeText(urlField.value)
+      .then(() => alert('URL copied to clipboard!'))
+      .catch(() => alert('Failed to copy URL.'));
+  } else {
+    alert('No URL to copy!');
+  }
+}
+
+  </script>
+</body>
 </html>
