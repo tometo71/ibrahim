@@ -1,0 +1,102 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Code Scanner</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0f0f0f;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }h1 {
+  color: #00ffcc;
+  text-shadow: 0 0 10px #00ffcc;
+}
+
+video {
+  width: 90vw;
+  max-width: 400px;
+  border: 3px solid #00ffcc;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+  margin-bottom: 20px;
+}
+
+#output {
+  background-color: #1a1a1a;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  width: 90vw;
+  max-width: 400px;
+  word-wrap: break-word;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+#copyButton {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background-color: #00ffcc;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 10px #00ffcc;
+}
+
+#copyButton:hover {
+  background-color: #00ccaa;
+}
+
+  </style>
+</head>
+<body>
+  <h1>QR Code Scanner</h1>
+  <video id="preview"></video>
+  <div id="output">Scanned code will appear here</div>
+  <button id="copyButton">Copy</button>  <script src="https://unpkg.com/html5-qrcode"></script>  <script>
+    const html5QrCode = new Html5Qrcode("preview");
+    const output = document.getElementById("output");
+    const copyButton = document.getElementById("copyButton");
+
+    Html5Qrcode.getCameras().then(devices => {
+      if (devices && devices.length) {
+        const cameraId = devices[0].id;
+        html5QrCode.start(
+          cameraId,
+          {
+            fps: 10,
+            qrbox: 250,
+          },
+          qrCodeMessage => {
+            output.textContent = qrCodeMessage;
+          },
+          errorMessage => {
+            console.warn(`QR Code no match: ${errorMessage}`);
+          }
+        );
+      }
+    }).catch(err => {
+      console.error("Camera access error: ", err);
+    });
+
+    copyButton.addEventListener("click", () => {
+      const text = output.textContent;
+      if (text && text !== 'Scanned code will appear here') {
+        navigator.clipboard.writeText(text).then(() => {
+          copyButton.textContent = "Copied!";
+          setTimeout(() => copyButton.textContent = "Copy", 2000);
+        });
+      }
+    });
+  </script></body>
+</html>
