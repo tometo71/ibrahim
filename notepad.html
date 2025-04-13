@@ -1,0 +1,112 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notepad - Dark Theme</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #0d0d0d;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #ffffff66;
+    }
+    textarea {
+      width: 100%;
+      max-width: 800px;
+      height: 400px;
+      background-color: #1c1c1c;
+      border: none;
+      padding: 20px;
+      color: #ffffff;
+      font-size: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #ffffff22;
+      resize: none;
+      outline: none;
+      text-shadow: 0 0 3px #ffffff88;
+    }
+    .buttons {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #00ffcc;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #00ccaa;
+    }
+    footer {
+      margin-top: 30px;
+      color: #999;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Notepad</h1>
+  <textarea id="notepad" placeholder="Start writing your notes here..."></textarea>
+  <div class="buttons">
+    <button onclick="saveNote()">Save</button>
+    <button onclick="clearNote()">Clear</button>
+    <button onclick="downloadNote()">Download</button>
+    <button onclick="copyNote()">Copy</button>
+  </div>
+  <footer>&copy; 2025 - Your Notepad Tool</footer>  <script>
+    const notepad = document.getElementById('notepad');
+
+    // Load saved note
+    window.onload = () => {
+      const saved = localStorage.getItem('darkNote');
+      if (saved) notepad.value = saved;
+    };
+
+    function saveNote() {
+      localStorage.setItem('darkNote', notepad.value);
+      alert('Note saved locally!');
+    }
+
+    function clearNote() {
+      if (confirm('Are you sure you want to clear the note?')) {
+        notepad.value = '';
+        localStorage.removeItem('darkNote');
+      }
+    }
+
+    function downloadNote() {
+      const blob = new Blob([notepad.value], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'note.txt';
+      link.click();
+    }
+
+    function copyNote() {
+      notepad.select();
+      document.execCommand('copy');
+      alert('Note copied to clipboard!');
+    }
+  </script></body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text to PDF Converter</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }h1 {
+  color: #ffffff;
+  text-shadow: 0 0 10px #00ffcc;
+  margin-bottom: 20px;
+}
+
+textarea {
+  width: 90%;
+  max-width: 600px;
+  height: 250px;
+  padding: 15px;
+  font-size: 1rem;
+  background-color: #1e1e1e;
+  color: #ffffff;
+  border: 2px solid #00ffcc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+  resize: none;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 25px;
+  font-size: 1rem;
+  background-color: #00ffcc;
+  color: #121212;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  box-shadow: 0 0 10px #00ffcc;
+}
+
+button:hover {
+  background-color: #00ccb3;
+}
+
+  </style>
+</head>
+<body>
+  <h1>Text to PDF Converter</h1>
+  <textarea id="textInput" placeholder="Write your text here..."></textarea>
+  <button onclick="downloadPDF()">Download as PDF</button>  <script>
+    async function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const text = document.getElementById("textInput").value;
+      const lines = doc.splitTextToSize(text, 180);
+      doc.text(lines, 15, 20);
+      doc.save("text.pdf");
+    }
+  </script></body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>※‖ TOMETO‖※</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <style>
+    :root {
+      --bg-dark: #0d0d0d;
+      --text-dark: #fff;
+      --accent: #00ffcc;
+      --text-light: #000;
+      --bg-light: #f5f5f5;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      overflow-x: hidden;
+      transition: 0.3s ease;
+    }
+
+    body.light-mode {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .profile {
+      text-align: center;
+      padding: 150px 20px 20px;
+    }
+
+    .profile img {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 3px solid var(--accent);
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.5);
+    }
+
+    .profile h1 {
+      font-size: 2.5rem;
+      margin: 10px 0;
+      color: var(--accent);
+    }
+
+    .profile p {
+      font-size: 1.2rem;
+    }
+
+    #clock {
+      margin-top: 15px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    section {
+      padding: 60px 20px;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    h2 {
+      color: var(--accent);
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 25px;
+      background: var(--accent);
+      color: #000;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      margin: 10px;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #00ccaa;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #888;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--accent);
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    .social-icons {
+      margin-top: 20px;
+    }
+
+    .social-icons a {
+      color: var(--accent);
+      margin: 0 10px;
+      font-size: 24px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <i id="theme-icon" class="fas fa-moon"></i>
+  </button>
+  <div id="particles-js"></div>
+
+  <section class="profile">
+    <img src="pic.jpg" alt="Pic.jpg" />
+    <h1>IBRAHIM EBU</h1>
+    <p>Exploit the web. Defend the system.</p>
+    <div id="clock">Loading time...</div>
+  </section>
+
+  <section id="about">
+    <h2>About Me</h2>
+    <p>Hey there! I'm <strong>Ibrahim Ebu</strong>. I am a student. My birthday is 07-11-2006. On my page you will find your important tools and games.</p>
+  </section>
+
+  <section id="api-docs">
+    <h2>API Tools</h2>
+    <br/>
+    <a href="game.html" class="btn">Games</a>
+    <a href="tools.html" class="btn">Tools</a>
+  </section>
+
+  <section id="visitor-info">
+    <h2>Visitor Info</h2>
+    <p><strong>IP:</strong> <span id="ip">Loading...</span></p>
+    <p><strong>Device:</strong> <span id="device">Loading...</span></p>
+    <p><strong>Browser:</strong> <span id="browser">Loading...</span></p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Me</h2>
+    <div class="social-icons">
+      <a href="https://www.facebook.com/ibrahimebu071" target="_blank"><i class="fab fa-facebook"></i></a>
+      <a href="https://instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://t.me/" target="_blank"><i class="fab fa-telegram"></i></a>
+      <a href="https://wa.me/8801765555218" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 0xR3D. All rights reserved.
+  </footer>
+
+  <audio autoplay loop hidden>
+  <source src="sound.mp3" type="audio/mpeg">
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const icon = document.getElementById("theme-icon");
+      body.classList.toggle("light-mode");
+      icon.classList.toggle("fa-sun");
+      icon.classList.toggle("fa-moon");
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById("clock").textContent = `${h}:${m}:${s}`;
+    }
+
+    fetch("https://ipapi.co/json")
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("ip").textContent = data.ip;
+        document.getElementById("device").textContent = navigator.userAgent.includes("Mobile") ? "Mobile" : "Desktop";
+        document.getElementById("browser").textContent = navigator.userAgent;
+      });
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 80, density: { enable: true, value_area: 800 } },
+        color: { value: "#00ffcc" },
+        shape: { type: "circle" },
+        opacity: { value: 0.5 },
+        size: { value: 3, random: true },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#00ffcc",
+          opacity: 0.4,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 4,
+          direction: "none",
+          out_mode: "out"
+        }
+      },
+      interactivity: {
+        events: {
+          onhover: { enable: true, mode: "repulse" },
+          onclick: { enable: true, mode: "push" }
+        },
+        modes: {
+          repulse: { distance: 200, duration: 0.4 },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
+  </script>
+</body>
+</html>

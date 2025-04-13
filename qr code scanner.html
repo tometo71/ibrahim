@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Scanner</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0d0d0d;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc;
+    }
+    #reader {
+      width: 90vw;
+      max-width: 400px;
+      margin-bottom: 20px;
+    }
+    #result {
+      font-size: 1.2rem;
+      color: #00ffcc;
+      margin-top: 10px;
+      text-shadow: 0 0 5px #00ffcc;
+      word-break: break-all;
+    }
+    .upload {
+      margin-top: 20px;
+    }
+    input[type="file"] {
+      background: #00ffcc;
+      padding: 10px;
+      border-radius: 5px;
+      color: #000;
+      cursor: pointer;
+    }
+  </style>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+  <h1>QR Code Scanner</h1>
+  <div id="reader"></div>
+  <div class="upload">
+    <input type="file" accept="image/*" id="qr-image" />
+  </div>
+  <div id="result">Scan result will appear here</div>  <script>
+    const resultContainer = document.getElementById('result');
+
+    const qrScanner = new Html5Qrcode("reader");
+    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+    qrScanner.start(
+      { facingMode: "environment" },
+      config,
+      qrCodeMessage => {
+        resultContainer.innerText = `Scanned result: ${qrCodeMessage}`;
+      },
+      errorMessage => {}
+    ).catch(err => {
+      resultContainer.innerText = `Camera Error: ${err}`;
+    });
+
+    // Image file QR code scanning
+    document.getElementById('qr-image').addEventListener('change', function (e) {
+      if (e.target.files.length === 0) {
+        return;
+      }
+      const file = e.target.files[0];
+      if (!file) return;
+
+      Html5Qrcode.getCameras().then(() => {
+        qrScanner.clear().then(() => {
+          const qrCodeScanner = new Html5Qrcode("reader");
+          qrCodeScanner.scanFile(file, true)
+            .then(decodedText => {
+              resultContainer.innerText = `Scanned result: ${decodedText}`;
+            })
+            .catch(err => {
+              resultContainer.innerText = `Scan error: ${err}`;
+            });
+        });
+      });
+    });
+  </script></body>
+</html>

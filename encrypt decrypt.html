@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Text Encrypt/Decrypt</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }h1 {
+  text-shadow: 0 0 8px #ffffff;
+}
+
+textarea {
+  width: 90%;
+  max-width: 600px;
+  height: 150px;
+  padding: 10px;
+  font-size: 16px;
+  background: #1e1e1e;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  resize: none;
+}
+
+.buttons {
+  margin-top: 20px;
+}
+
+button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #03dac6;
+  color: #000;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #00c4a7;
+}
+
+label {
+  margin-top: 20px;
+  font-size: 18px;
+  text-shadow: 0 0 5px #ffffff;
+}
+
+  </style>
+</head>
+<body>
+  <h1>Text Encrypt / Decrypt</h1>
+  <label for="inputText">Enter your text:</label>
+  <textarea id="inputText" placeholder="Type your message here..."></textarea>  <div class="buttons">
+    <button onclick="encryptText()">Encrypt</button>
+    <button onclick="decryptText()">Decrypt</button>
+  </div><label for="outputText">Result:</label>
+
+  <textarea id="outputText" readonly></textarea>  <script>
+    function encryptText() {
+      const text = document.getElementById('inputText').value;
+      const encrypted = btoa(text);
+      document.getElementById('outputText').value = encrypted;
+    }
+
+    function decryptText() {
+      try {
+        const encrypted = document.getElementById('inputText').value;
+        const decrypted = atob(encrypted);
+        document.getElementById('outputText').value = decrypted;
+      } catch (e) {
+        document.getElementById('outputText').value = 'Invalid encrypted text!';
+      }
+    }
+  </script></body>
+</html>

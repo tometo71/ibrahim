@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Games</title>
+  <style>
+    body {
+      background: #0d0d0d;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .game {
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00ffcc60;
+    }
+    .game img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .game a {
+      display: block;
+      margin-top: 10px;
+      color: #00ffcc;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Web Games</h1>
+  <div class="grid">
+    <div class="game"><img src="coin.png" alt="Coin"><a href="Flipping Coin.html" target="_blank">Flipping Coin</a></div>
+    <div class="game"><img src="tic.png" alt="Tic"><a href="tik tac toe.html" target="_blank">Tic Tac Toe</a></div>
+    <div class="game"><img src="memory.png" alt="Memory"><a href="memory card match.html" target="_blank">Memory Card Match</a></div>
+    <div class="game"><img src="mole.png" alt="Mole"><a href="Whack A Mole.html" target="_blank">Whack A Mole</a></div>
+    <div class="game"><img src="quiz.png" alt="Quiz"><a href="Quiz Game.html" target="_blank">Quiz</a></div>
+    <div class="game"><img src="word.png" alt="Word"><a href="Word Guess.html" target="_blank">Word Guess</a></div>
+    <!-- Repeat till 10 -->
+  </div>
+</body>
+</html>

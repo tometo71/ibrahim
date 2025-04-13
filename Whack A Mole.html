@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Whack A Mole - 0xR3D</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(145deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #00ffcc;
+      margin-bottom: 20px;
+    }
+    #game {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 15px;
+    }
+    .mole {
+      width: 100px;
+      height: 100px;
+      border-radius: 15px;
+      background-color: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(0, 255, 200, 0.5);
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+    .mole.active {
+      background-color: #00ffcc;
+    }
+    #score {
+      margin-top: 20px;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Whack A Mole</h1>
+  <div id="game"></div>
+  <div id="score">Score: 0</div><audio id="clickSound" src="click.wav"></audio> <audio id="missSound" src="miss.wav"></audio> <audio id="winSound" src="win.wav"></audio>
+
+  <script>
+    const game = document.getElementById('game');
+    const scoreDisplay = document.getElementById('score');
+    const clickSound = document.getElementById('clickSound');
+    const missSound = document.getElementById('missSound');
+    const winSound = document.getElementById('winSound');
+    let score = 0;
+
+    for (let i = 0; i < 9; i++) {
+      const mole = document.createElement('div');
+      mole.classList.add('mole');
+      mole.addEventListener('click', () => {
+        if (mole.classList.contains('active')) {
+          score++;
+          clickSound.play();
+        } else {
+          score = Math.max(0, score - 1);
+          missSound.play();
+        }
+        scoreDisplay.textContent = `Score: ${score}`;
+        if (score === 10) winSound.play();
+      });
+      game.appendChild(mole);
+    }
+
+    function activateMole() {
+      const moles = document.querySelectorAll('.mole');
+      moles.forEach(m => m.classList.remove('active'));
+      const index = Math.floor(Math.random() * moles.length);
+      moles[index].classList.add('active');
+    }
+    setInterval(activateMole, 1000);
+  </script></body>
+</html>

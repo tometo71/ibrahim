@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Game</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #1a1a1a;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .game-container {
+      width: 90%;
+      max-width: 600px;
+      background: #333;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      display: none;
+    }
+    .game-container h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #00ffcc;
+    }
+    .question {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+    .option {
+      background-color: #444;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      width: 100%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: background 0.3s ease;
+    }
+    .option:hover {
+      background-color: #00ffcc;
+    }
+    .option.correct {
+      background-color: #4CAF50;
+    }
+    .option.incorrect {
+      background-color: #f44336;
+    }
+    .score {
+      font-size: 1.2rem;
+      margin-top: 20px;
+      color: #fff;
+    }
+    .game-over {
+      font-size: 2rem;
+      color: #f44336;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container" id="game-container">
+    <h1>Quiz Game</h1>
+    <div id="question-container" class="question">
+      <p>Loading...</p>
+    </div>
+    <div id="options-container">
+      <!-- Options will be dynamically generated here -->
+    </div>
+    <div id="score-container" class="score"></div>
+  </div>
+
+  <div id="game-over-container" class="game-container">
+    <h1>Game Over!</h1>
+    <p>Your Final Score: <span id="final-score"></span></p>
+    <button onclick="startGame()" class="option">Play Again</button>
+  </div>
+
+  <audio id="click-sound" src="click.wav" preload="auto"></audio>
+  <audio id="miss-sound" src="miss.wav" preload="auto"></audio>
+  <audio id="win-sound" src="win.wav" preload="auto"></audio>
+
+  <script>
+    const questions = [
+      { question: "What is the capital of France?", options: ["Berlin", "Madrid", "Paris", "Rome"], correct: 2 },
+      { question: "Who developed the theory of relativity?", options: ["Isaac Newton", "Albert Einstein", "Galileo", "Nikola Tesla"], correct: 1 },
+      { question: "What is the chemical symbol for gold?", options: ["Au", "Ag", "Pb", "Fe"], correct: 0 },
+      { question: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter", "Saturn"], correct: 1 },
+      { question: "Who wrote 'Romeo and Juliet'?", options: ["Shakespeare", "Dickens", "Austen", "Hemingway"], correct: 0 },
+      { question: "What is the largest mammal?", options: ["Elephant", "Blue Whale", "Shark", "Giraffe"], correct: 1 },
+      { question: "Which country is known as the Land of the Rising Sun?", options: ["China", "Japan", "India", "Korea"], correct: 1 },
+      { question: "What is the smallest prime number?", options: ["0", "1", "2", "3"], correct: 2 },
+      { question: "Who was the first President of the United States?", options: ["George Washington", "Abraham Lincoln", "Thomas Jefferson", "John Adams"], correct: 0 },
+      { question: "Which element has the atomic number 1?", options: ["Oxygen", "Hydrogen", "Carbon", "Nitrogen"], correct: 1 },
+      { question: "What is the largest planet in our solar system?", options: ["Earth", "Mars", "Jupiter", "Saturn"], correct: 2 },
+      { question: "Who painted the Mona Lisa?", options: ["Leonardo da Vinci", "Pablo Picasso", "Vincent van Gogh", "Claude Monet"], correct: 0 },
+      { question: "What is the longest river in the world?", options: ["Amazon", "Nile", "Yangtze", "Mississippi"], correct: 1 },
+      { question: "Which element is represented by the symbol 'O'?", options: ["Oxygen", "Gold", "Osmium", "Ozone"], correct: 0 }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function startGame() {
+      document.getElementById("game-container").style.display = "block";
+      document.getElementById("game-over-container").style.display = "none";
+      currentQuestion = 0;
+      score = 0;
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      if (currentQuestion < questions.length) {
+        const questionData = questions[currentQuestion];
+        document.getElementById("question-container").textContent = questionData.question;
+        
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = '';
+        questionData.options.forEach((option, index) => {
+          const button = document.createElement("button");
+          button.classList.add("option");
+          button.textContent = option;
+          button.onclick = () => checkAnswer(index);
+          optionsContainer.appendChild(button);
+        });
+      } else {
+        endGame();
+      }
+    }
+
+    function checkAnswer(selectedIndex) {
+      const questionData = questions[currentQuestion];
+      const options = document.querySelectorAll(".option");
+
+      if (selectedIndex === questionData.correct) {
+        score++;
+        options[selectedIndex].classList.add("correct");
+        document.getElementById("win-sound").play();
+      } else {
+        options[selectedIndex].classList.add("incorrect");
+        document.getElementById("miss-sound").play();
+      }
+
+      setTimeout(() => {
+        currentQuestion++;
+        loadQuestion();
+      }, 1000);
+      
+      document.getElementById("click-sound").play();
+    }
+
+    function endGame() {
+      document.getElementById("final-score").textContent = score;
+      document.getElementById("game-container").style.display = "none";
+      document.getElementById("game-over-container").style.display = "block";
+    }
+
+    startGame();
+  </script>
+</body>
+</html>

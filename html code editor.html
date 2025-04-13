@@ -1,0 +1,86 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Editor - 0xR3D</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0d0d0d;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+    h1 {
+      margin-top: 20px;
+      color: #00ffcc;
+      text-shadow: 0 0 5px #00ffcc;
+    }
+    textarea {
+      width: 90%;
+      height: 50vh;
+      background: #1a1a1a;
+      color: #fff;
+      border: 1px solid #00ffcc;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 10px 0;
+      font-family: monospace;
+      font-size: 14px;
+      resize: none;
+      box-shadow: 0 0 5px rgba(0, 255, 204, 0.3);
+    }
+    iframe {
+      width: 90%;
+      height: 40vh;
+      background: #fff;
+      border: none;
+      margin-bottom: 10px;
+      border-radius: 10px;
+    }
+    button {
+      background-color: #00ffcc;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 25px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,255,204,0.5);
+    }
+    button:hover {
+      background-color: #00ccaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>Live Code Editor</h1>
+  <textarea id="codeInput" placeholder="Write your HTML, CSS & JavaScript code here..."></textarea>
+  <button onclick="runCode()">Run Code</button>
+  <button onclick="downloadCode()">Download Code</button>
+  <iframe id="output"></iframe>  <script>
+    function runCode() {
+      const code = document.getElementById("codeInput").value;
+      const outputFrame = document.getElementById("output");
+      outputFrame.srcdoc = code;
+    }
+
+    function downloadCode() {
+      const code = document.getElementById("codeInput").value;
+      const blob = new Blob([code], { type: 'text/html' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = "my_code.html";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script></body>
+</html>

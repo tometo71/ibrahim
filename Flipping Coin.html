@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flipping Coin Game</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #121212;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .coin {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      color: #121212;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      transition: transform 1s ease-in-out;
+    }
+
+    .button {
+      background-color: #00ffcc;
+      color: #121212;
+      font-size: 1.2rem;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 5px 15px rgba(0, 255, 204, 0.3);
+    }
+
+    .button:hover {
+      background-color: #00ccaa;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 1.5rem;
+    }
+
+    .choice-buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .choice-buttons button {
+      margin: 0 10px;
+      padding: 10px 20px;
+      background-color: #333;
+      color: #fff;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .choice-buttons button:hover {
+      background-color: #444;
+    }
+
+    /* Dark mode for better contrast */
+    body {
+      background-color: #121212;
+    }
+
+    .coin-text {
+      font-weight: bold;
+      font-size: 3rem;
+      transition: opacity 0.5s ease;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>Flipping Coin</h1>
+  <p>Choose Heads or Tails</p>
+
+  <!-- User choice buttons -->
+  <div class="choice-buttons">
+    <button class="button" onclick="setUserChoice('Heads')">Heads</button>
+    <button class="button" onclick="setUserChoice('Tails')">Tails</button>
+  </div>
+
+  <div class="coin">
+    <span class="coin-text">Heads</span>
+  </div>
+  <button class="button" onclick="flipCoin()">Flip Coin</button>
+  <div class="result" id="result"></div>
+
+  <!-- Sound files -->
+  <audio id="clickSound" src="click.wav" preload="auto"></audio>
+  <audio id="winSound" src="win.wav" preload="auto"></audio>
+  <audio id="loseSound" src="miss.wav" preload="auto"></audio>
+
+  <script>
+    const coin = document.querySelector('.coin');
+    const coinText = document.querySelector('.coin-text');
+    const resultDiv = document.getElementById('result');
+    const clickSound = document.getElementById('clickSound');
+    const winSound = document.getElementById('winSound');
+    const loseSound = document.getElementById('loseSound');
+    let userChoice = '';
+
+    function setUserChoice(choice) {
+      userChoice = choice;
+      resultDiv.textContent = ''; // Clear previous result
+    }
+
+    function flipCoin() {
+      if (!userChoice) {
+        resultDiv.textContent = "Please select Heads or Tails first!";
+        return;
+      }
+
+      // Play click sound when button clicked
+      clickSound.play();
+
+      // Randomly decide if it will be Heads or Tails
+      const random = Math.random() < 0.5 ? 'Heads' : 'Tails';
+
+      // Animate coin flip
+      coin.style.transform = 'rotateY(1800deg)';
+      setTimeout(() => {
+        coin.style.transform = 'rotateY(0deg)';
+        coinText.textContent = random; // Update coin text with result
+        checkResult(random);
+      }, 1000);
+    }
+
+    function checkResult(coinResult) {
+      if (coinResult === userChoice) {
+        resultDiv.textContent = `You Win! It's ${coinResult}!`;
+        resultDiv.style.color = 'green';
+        winSound.play(); // Play win sound
+      } else {
+        resultDiv.textContent = `You Lose! It's ${coinResult}.`;
+        resultDiv.style.color = 'red';
+        loseSound.play(); // Play lose sound
+      }
+    }
+  </script>
+</body>
+</html>

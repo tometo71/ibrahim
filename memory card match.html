@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory Card Game</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }h1 {
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px #0f0;
+}
+
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(4, 100px);
+  grid-gap: 15px;
+}
+
+.card {
+  width: 100px;
+  height: 100px;
+  background: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  cursor: pointer;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #0f0;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.card.flipped {
+  background: #0f0;
+  color: #000;
+  transform: rotateY(180deg);
+}
+
+.card.matched {
+  background: #444;
+  color: #0f0;
+  cursor: default;
+}
+
+  </style>
+</head>
+<body>
+  <h1>Memory Card Match</h1>
+  <div class="game-board" id="gameBoard"></div><audio id="clickSound" src="click.wav"></audio> <audio id="winSound" src="win.wav"></audio>
+
+  <script>
+    const gameBoard = document.getElementById("gameBoard");
+    const clickSound = document.getElementById("clickSound");
+    const winSound = document.getElementById("winSound");
+
+    const emojis = ["🍕", "🍔", "🍟", "🌭", "🥓", "🍩", "🍿", "🍪"];
+    const cards = [...emojis, ...emojis];
+    let flippedCards = [];
+    let matchedCount = 0;
+
+    shuffle(cards);
+    cards.forEach((emoji) => {
+      const card = document.createElement("div");
+      card.classList.add("card");
+      card.dataset.emoji = emoji;
+      card.textContent = "?";
+      card.addEventListener("click", handleCardClick);
+      gameBoard.appendChild(card);
+    });
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function handleCardClick(e) {
+      const card = e.target;
+      if (card.classList.contains("flipped") || card.classList.contains("matched") || flippedCards.length === 2) return;
+
+      clickSound.play();
+
+      card.classList.add("flipped");
+      card.textContent = card.dataset.emoji;
+      flippedCards.push(card);
+
+      if (flippedCards.length === 2) {
+        const [first, second] = flippedCards;
+        if (first.dataset.emoji === second.dataset.emoji) {
+          first.classList.add("matched");
+          second.classList.add("matched");
+          flippedCards = [];
+          matchedCount++;
+          winSound.play();
+          if (matchedCount === emojis.length) {
+            setTimeout(() => alert("You won!"), 300);
+          }
+        } else {
+          setTimeout(() => {
+            first.classList.remove("flipped");
+            second.classList.remove("flipped");
+            first.textContent = "?";
+            second.textContent = "?";
+            flippedCards = [];
+          }, 1000);
+        }
+      }
+    }
+  </script></body>
+</html>

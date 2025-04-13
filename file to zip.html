@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZIP File Creator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #121212;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #00ffcc;
+      text-shadow: 0 0 15px rgba(0, 255, 200, 0.8), 0 0 20px rgba(0, 255, 200, 0.5);
+      margin-bottom: 20px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .container {
+      background-color: #1d1d1d;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .container input[type="file"] {
+      padding: 15px;
+      background-color: #00ffcc;
+      color: #000;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      border: none;
+      width: 100%;
+      cursor: pointer;
+      margin-bottom: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .container input[type="file"]:hover {
+      background-color: #00ccaa;
+      box-shadow: 0 0 15px rgba(0, 255, 200, 0.5);
+    }
+
+    .container button {
+      padding: 15px 30px;
+      background-color: #00ffcc;
+      color: #000;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 255, 200, 0.3);
+    }
+
+    .container button:hover {
+      background-color: #00ccaa;
+      transform: scale(1.05);
+      box-shadow: 0 5px 25px rgba(0, 255, 200, 0.6);
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container" id="content">
+    <h1>ZIP File Creator</h1>
+    <input type="file" id="fileInput" />
+    <button onclick="createZip()">Create ZIP</button>
+  </div>
+
+  <footer>
+    &copy; 2025 ZIP File Creator. All rights reserved.
+  </footer>
+
+  <script>
+    function createZip() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert("Please select a file.");
+        return;
+      }
+
+      const zip = new JSZip();
+      zip.file(file.name, file);
+
+      zip.generateAsync({ type: "blob" }).then(function(content) {
+        // Create a download link
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = file.name.split('.')[0] + '.zip'; // Set the downloaded file name
+        // Trigger a click on the link to start the download
+        link.click();
+      }).catch(function(error) {
+        alert("There was an error creating the ZIP file: " + error);
+      });
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Compass</title>
+  <style>
+    body {
+      margin: 0;
+      background: #121212;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      text-shadow: 0 0 10px #00ffe1;
+    }
+
+    .compass {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      border: 8px solid #00ffe1;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #00ffe1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .needle {
+      position: absolute;
+      width: 4px;
+      height: 140px;
+      background: red;
+      top: 10px;
+      left: 50%;
+      transform-origin: bottom center;
+      border-radius: 2px;
+      box-shadow: 0 0 6px red;
+    }
+
+    .direction {
+      position: absolute;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffffff;
+      text-shadow: 0 0 5px #00ffe1;
+    }
+
+    .direction.n { top: 10px; left: 50%; transform: translateX(-50%); }
+    .direction.s { bottom: 10px; left: 50%; transform: translateX(-50%); }
+    .direction.e { right: 10px; top: 50%; transform: translateY(-50%); }
+    .direction.w { left: 10px; top: 50%; transform: translateY(-50%); }
+
+    .direction.ne { top: 25px; right: 25px; }
+    .direction.nw { top: 25px; left: 25px; }
+    .direction.se { bottom: 25px; right: 25px; }
+    .direction.sw { bottom: 25px; left: 25px; }
+
+    .degree {
+      margin-top: 20px;
+      font-size: 24px;
+      text-shadow: 0 0 6px #00ffe1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Live Compass</h1>
+  <div class="compass" id="compass">
+    <div class="needle" id="needle"></div>
+    <div class="direction n">N</div>
+    <div class="direction s">S</div>
+    <div class="direction e">E</div>
+    <div class="direction w">W</div>
+    <div class="direction ne">NE</div>
+    <div class="direction nw">NW</div>
+    <div class="direction se">SE</div>
+    <div class="direction sw">SW</div>
+  </div>
+  <div class="degree" id="degree">0°</div>
+
+  <script>
+    function handleOrientation(event) {
+      let alpha = event.alpha;
+      if (alpha !== null) {
+        document.getElementById('needle').style.transform = `rotate(${alpha}deg)`;
+        document.getElementById('degree').textContent = `${Math.round(alpha)}°`;
+      }
+    }
+
+    // Request permission for iOS 13+
+    window.addEventListener('click', function requestPermission() {
+      if (typeof DeviceOrientationEvent !== 'undefined' &&
+          typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+          .then(permissionState => {
+            if (permissionState === 'granted') {
+              window.addEventListener('deviceorientation', handleOrientation);
+            } else {
+              alert("Permission denied for compass.");
+            }
+          })
+          .catch(console.error);
+      } else {
+        window.addEventListener('deviceorientation', handleOrientation);
+      }
+      window.removeEventListener('click', requestPermission);
+    });
+  </script>
+</body>
+</html>

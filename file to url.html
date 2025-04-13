@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>File to URL Converter</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #ffffff;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    h1 {
+      color: #00ffcc;
+      text-shadow: 0 0 10px #00ffcc;
+    }
+    input[type="file"] {
+      margin: 20px 0;
+      background: #1a1a1a;
+      color: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+    }
+    #urlOutput {
+      margin-top: 20px;
+      background-color: #1a1a1a;
+      padding: 10px;
+      border-radius: 10px;
+      word-break: break-all;
+      color: #00ffcc;
+      box-shadow: 0 0 5px #00ffcc;
+    }
+    button.copyBtn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #00ffcc;
+      color: #000;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button.copyBtn:hover {
+      background-color: #00ccaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>File to URL Converter</h1>
+  <input type="file" id="fileInput" />
+  <div id="urlOutput">URL will appear here</div>
+  <button class="copyBtn" onclick="copyURL()">Copy URL</button>  <script>
+    const fileInput = document.getElementById("fileInput");
+    const urlOutput = document.getElementById("urlOutput");
+
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        urlOutput.textContent = url;
+      }
+    });
+
+    function copyURL() {
+      const text = urlOutput.textContent;
+      if (text && text !== 'URL will appear here') {
+        navigator.clipboard.writeText(text).then(() => {
+          alert("URL copied to clipboard!");
+        });
+      }
+    }
+  </script></body>
+</html>

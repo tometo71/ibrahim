@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Video Editor</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+
+    h1 {
+      text-shadow: 0 0 8px #00ffff;
+    }
+
+    .editor {
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #00ffff33;
+      max-width: 700px;
+      width: 100%;
+    }
+
+    video {
+      max-width: 100%;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      filter: none;
+    }
+
+    label, input, select, button {
+      display: block;
+      margin: 10px 0;
+      width: 100%;
+    }
+
+    button {
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #00ffff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #00dddd;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Video Editing Tool</h1>
+  <div class="editor">
+    <input type="file" id="videoFile" accept="video/*">
+    <video id="video" controls></video>
+
+    <label for="filter">Apply Filter:</label>
+    <select id="filter">
+      <option value="none">None</option>
+      <option value="grayscale(100%)">Grayscale</option>
+      <option value="sepia(100%)">Sepia</option>
+      <option value="invert(100%)">Invert</option>
+      <option value="brightness(150%)">Bright</option>
+      <option value="contrast(200%)">High Contrast</option>
+    </select>
+
+    <label for="startTime">Start Time (sec):</label>
+    <input type="number" id="startTime" min="0" value="0">
+
+    <label for="endTime">End Time (sec):</label>
+    <input type="number" id="endTime" min="1" value="5">
+
+    <button id="editBtn">Preview Cut</button>
+    <button id="downloadBtn">Download Edited Video</button>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const fileInput = document.getElementById('videoFile');
+    const filterSelect = document.getElementById('filter');
+    const startTimeInput = document.getElementById('startTime');
+    const endTimeInput = document.getElementById('endTime');
+    const editBtn = document.getElementById('editBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    let mediaRecorder, recordedChunks = [];
+
+    fileInput.addEventListener('change', function () {
+      const file = fileInput.files[0];
+      const url = URL.createObjectURL(file);
+      video.src = url;
+    });
+
+    filterSelect.addEventListener('change', () => {
+      video.style.filter = filterSelect.value;
+    });
+
+    editBtn.addEventListener('click', () => {
+      const start = parseFloat(startTimeInput.value);
+      const end = parseFloat(endTimeInput.value);
+
+      if (isNaN(start) || isNaN(end) || end <= start) {
+        alert('Invalid start or end time.');
+        return;
+      }
+
+      video.currentTime = start;
+      video.play();
+
+      setTimeout(() => {
+        video.pause();
+      }, (end - start) * 1000);
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      const stream = video.captureStream();
+      recordedChunks = [];
+
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = (e) => recordedChunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'edited-video.webm';
+        a.click();
+      };
+
+      const start = parseFloat(startTimeInput.value);
+      const end = parseFloat(endTimeInput.value);
+
+      video.currentTime = start;
+      video.play();
+      mediaRecorder.start();
+
+      setTimeout(() => {
+        video.pause();
+        mediaRecorder.stop();
+      }, (end - start) * 1000);
+    });
+  </script>
+</body>
+</html>

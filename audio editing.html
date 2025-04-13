@@ -1,0 +1,186 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio Editor</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }body {
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+  color: #f1f1f1;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+h1 {
+  margin-top: 20px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.editor {
+  width: 100%;
+  max-width: 400px;
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.editor input[type="file"] {
+  width: 100%;
+  margin-bottom: 15px;
+  background-color: #2c2c2c;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.controls label {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.controls input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+button {
+  width: 100%;
+  margin-top: 15px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #03dac6;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #00b3a4;
+}
+
+audio {
+  width: 100%;
+  margin-top: 15px;
+}
+
+  </style>
+</head>
+<body>
+  <h1>Smart Audio Editor</h1>
+  <div class="editor">
+    <input type="file" id="audioFile" accept="audio/*">
+    <div class="controls">
+      <label for="start">Start Time (seconds)</label>
+      <input type="number" id="start" min="0" value="0"><label for="end">End Time (seconds)</label>
+  <input type="number" id="end" min="1" value="10">
+
+  <label for="volume">Volume (0.0 - 2.0)</label>
+  <input type="range" id="volume" min="0" max="2" step="0.1" value="1">
+</div>
+<button onclick="editAudio()">Edit & Preview</button>
+<button onclick="downloadAudio()">Download</button>
+<audio id="preview" controls></audio>
+
+  </div>  <script>
+    let audioBlob;
+
+    async function editAudio() {
+      const fileInput = document.getElementById('audioFile');
+      const start = parseFloat(document.getElementById('start').value);
+      const end = parseFloat(document.getElementById('end').value);
+      const volume = parseFloat(document.getElementById('volume').value);
+
+      if (!fileInput.files[0]) return alert("Please select an audio file");
+
+      const context = new AudioContext();
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const arrayBuffer = reader.result;
+        const audioBuffer = await context.decodeAudioData(arrayBuffer);
+
+        const duration = Math.min(end, audioBuffer.duration);
+        const cutLength = duration - start;
+
+        const outputBuffer = context.createBuffer(
+          audioBuffer.numberOfChannels,
+          context.sampleRate * cutLength,
+          context.sampleRate
+        );
+
+        for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
+          const input = audioBuffer.getChannelData(channel).slice(start * context.sampleRate, duration * context.sampleRate);
+          const output = outputBuffer.getChannelData(channel);
+          for (let i = 0; i < input.length; i++) {
+            output[i] = input[i] * volume;
+          }
+        }
+
+        const audioData = await encodeWav(outputBuffer);
+        audioBlob = new Blob([audioData], { type: 'audio/wav' });
+        document.getElementById('preview').src = URL.createObjectURL(audioBlob);
+      };
+      reader.readAsArrayBuffer(fileInput.files[0]);
+    }
+
+    function downloadAudio() {
+      if (!audioBlob) return alert("Please edit audio first");
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(audioBlob);
+      link.download = 'edited-audio.wav';
+      link.click();
+    }
+
+    async function encodeWav(audioBuffer) {
+      const numChannels = audioBuffer.numberOfChannels;
+      const length = audioBuffer.length * numChannels * 2;
+      const buffer = new ArrayBuffer(44 + length);
+      const view = new DataView(buffer);
+
+      function writeString(view, offset, string) {
+        for (let i = 0; i < string.length; i++) {
+          view.setUint8(offset + i, string.charCodeAt(i));
+        }
+      }
+
+      let offset = 0;
+      writeString(view, offset, 'RIFF'); offset += 4;
+      view.setUint32(offset, 36 + length, true); offset += 4;
+      writeString(view, offset, 'WAVE'); offset += 4;
+      writeString(view, offset, 'fmt '); offset += 4;
+      view.setUint32(offset, 16, true); offset += 4;
+      view.setUint16(offset, 1, true); offset += 2;
+      view.setUint16(offset, numChannels, true); offset += 2;
+      view.setUint32(offset, audioBuffer.sampleRate, true); offset += 4;
+      view.setUint32(offset, audioBuffer.sampleRate * numChannels * 2, true); offset += 4;
+      view.setUint16(offset, numChannels * 2, true); offset += 2;
+      view.setUint16(offset, 16, true); offset += 2;
+      writeString(view, offset, 'data'); offset += 4;
+      view.setUint32(offset, length, true); offset += 4;
+
+      for (let i = 0; i < audioBuffer.length; i++) {
+        for (let channel = 0; channel < numChannels; channel++) {
+          let sample = audioBuffer.getChannelData(channel)[i];
+          sample = Math.max(-1, Math.min(1, sample));
+          view.setInt16(offset, sample * 0x7FFF, true);
+          offset += 2;
+        }
+      }
+      return buffer;
+    }
+  </script></body>
+</html>

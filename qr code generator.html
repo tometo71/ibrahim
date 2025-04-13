@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Code Generator</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #fff;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    h1 {
+      text-shadow: 0 0 5px #aaa;
+    }
+    input, textarea, button {
+      margin: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    input, textarea {
+      width: 300px;
+    }
+    button {
+      background-color: #03dac6;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    canvas {
+      margin-top: 20px;
+    }
+    label {
+      text-shadow: 0 0 5px #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>QR Code Generator</h1><label for="text">Enter Text or URL:</label><br />
+
+  <textarea id="text" rows="4"></textarea><br /><label for="file">Or Upload File:</label><br /> <input type="file" id="file" /><br />
+
+<button onclick="generateQRCode()">Generate QR</button>
+
+<canvas id="qrcode"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>  <script>
+    function generateQRCode() {
+      const textInput = document.getElementById("text").value.trim();
+      const fileInput = document.getElementById("file").files[0];
+      const qr = new QRious({
+        element: document.getElementById("qrcode"),
+        size: 250,
+        value: ""
+      });
+
+      if (fileInput) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          qr.value = e.target.result;
+        };
+        reader.readAsDataURL(fileInput);
+      } else if (textInput) {
+        qr.value = textInput;
+      } else {
+        alert("Please enter text or upload a file.");
+      }
+    }
+  </script></body>
+</html>

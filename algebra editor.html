@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Algebra Editor</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #121212;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      padding: 10px;
+    }h1 {
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+  margin-top: 20px;
+}
+
+textarea {
+  width: 90%;
+  height: 150px;
+  background-color: #1e1e1e;
+  color: #00ffcc;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 16px;
+  box-shadow: 0 0 10px #00ffcc33;
+  resize: none;
+}
+
+iframe {
+  width: 90%;
+  height: 250px;
+  background-color: white;
+  border: none;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #00ffcc;
+  color: #121212;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 10px #00ffcc88;
+}
+
+button:hover {
+  background-color: #00ddb3;
+}
+
+  </style>
+</head>
+<body>
+  <h1>Algebra Editor</h1>
+  <textarea id="code" placeholder="Write your algebraic HTML/MathML code here..."></textarea>
+  <button onclick="runCode()">Run</button>
+  <button onclick="downloadCode()">Download</button>
+  <iframe id="output"></iframe>  <script>
+    function runCode() {
+      const code = document.getElementById("code").value;
+      const output = document.getElementById("output");
+      output.srcdoc = code;
+    }
+
+    function downloadCode() {
+      const code = document.getElementById("code").value;
+      const blob = new Blob([code], { type: "text/html" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "algebra_code.html";
+      link.click();
+    }
+  </script></body>
+</html>

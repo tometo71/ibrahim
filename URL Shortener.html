@@ -1,0 +1,110 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      box-sizing: border-box;
+    }h1 {
+  color: #00ffcc;
+  text-shadow: 0 0 10px #00ffcc;
+  margin-bottom: 10px;
+}
+
+.container {
+  width: 90%;
+  max-width: 400px;
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 255, 200, 0.2);
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  font-size: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: #00ffcc;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #00ccaa;
+}
+
+#result {
+  margin-top: 15px;
+  word-break: break-all;
+  color: #00ffcc;
+  text-shadow: 0 0 5px #00ffcc;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+.copy-btn {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.copy-btn:hover {
+  background: #555;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>URL Shortener</h1>
+    <input type="text" id="urlInput" placeholder="Enter your URL here">
+    <button onclick="shortenUrl()">Shorten</button>
+    <div id="result"></div>
+    <button class="copy-btn" onclick="copyToClipboard()" style="display:none">Copy</button>
+  </div>  <script>
+    function shortenUrl() {
+      const url = document.getElementById('urlInput').value;
+      if (!url) return alert('Please enter a URL');
+      const shortUrl = `https://short.ly/${Math.random().toString(36).substr(2, 6)}`;
+      document.getElementById('result').innerText = shortUrl;
+      document.querySelector('.copy-btn').style.display = 'inline-block';
+    }
+
+    function copyToClipboard() {
+      const text = document.getElementById('result').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Short URL copied to clipboard!");
+      });
+    }
+  </script></body>
+</html>
