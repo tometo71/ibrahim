@@ -1,94 +1,101 @@
-<!DOCTYPE html><html lang="en">
+ <!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QR Code Scanner</title>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      background-color: #0d0d0d;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
     }
+
     h1 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-      text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc;
-    }
-    #reader {
-      width: 90vw;
-      max-width: 400px;
-      margin-bottom: 20px;
-    }
-    #result {
-      font-size: 1.2rem;
-      color: #00ffcc;
-      margin-top: 10px;
       text-shadow: 0 0 5px #00ffcc;
-      word-break: break-all;
     }
-    .upload {
+
+    #reader {
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
+      border: 2px solid #00ffcc;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,255,200,0.3);
+    }
+
+    #result {
       margin-top: 20px;
+      font-size: 1.2em;
+      color: #00ffcc;
+      text-shadow: 0 0 3px #00ffcc;
     }
+
     input[type="file"] {
-      background: #00ffcc;
-      padding: 10px;
-      border-radius: 5px;
+      margin-top: 20px;
+      color: #00ffcc;
+    }
+
+    button {
+      background-color: #00ffcc;
       color: #000;
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
       cursor: pointer;
+      box-shadow: 0 0 10px #00ffcc;
+    }
+
+    button:hover {
+      background-color: #00ccaa;
     }
   </style>
-  <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body>
   <h1>QR Code Scanner</h1>
   <div id="reader"></div>
-  <div class="upload">
-    <input type="file" accept="image/*" id="qr-image" />
-  </div>
-  <div id="result">Scan result will appear here</div>  <script>
-    const resultContainer = document.getElementById('result');
+  <div id="result">Scan Result Will Appear Here</div>
 
-    const qrScanner = new Html5Qrcode("reader");
-    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+  <input type="file" accept="image/*" onchange="handleFile(this)" />
 
-    qrScanner.start(
+  <script>
+    const resultElement = document.getElementById('result');
+
+    function showResult(decodedText) {
+      resultElement.innerText = "Scanned: " + decodedText;
+    }
+
+    function handleFile(input) {
+      if (input.files.length === 0) return;
+      const file = input.files[0];
+      const html5QrCode = new Html5Qrcode("reader");
+      html5QrCode.scanFile(file, true)
+        .then(decodedText => showResult(decodedText))
+        .catch(err => resultElement.innerText = "Failed to scan: " + err);
+    }
+
+    const html5QrCode = new Html5Qrcode("reader");
+    html5QrCode.start(
       { facingMode: "environment" },
-      config,
-      qrCodeMessage => {
-        resultContainer.innerText = `Scanned result: ${qrCodeMessage}`;
+      {
+        fps: 10,
+        qrbox: { width: 250, height: 250 }
       },
-      errorMessage => {}
-    ).catch(err => {
-      resultContainer.innerText = `Camera Error: ${err}`;
-    });
-
-    // Image file QR code scanning
-    document.getElementById('qr-image').addEventListener('change', function (e) {
-      if (e.target.files.length === 0) {
-        return;
+      decodedText => {
+        html5QrCode.stop();
+        showResult(decodedText);
+      },
+      errorMessage => {
+        // ignore scan errors
       }
-      const file = e.target.files[0];
-      if (!file) return;
-
-      Html5Qrcode.getCameras().then(() => {
-        qrScanner.clear().then(() => {
-          const qrCodeScanner = new Html5Qrcode("reader");
-          qrCodeScanner.scanFile(file, true)
-            .then(decodedText => {
-              resultContainer.innerText = `Scanned result: ${decodedText}`;
-            })
-            .catch(err => {
-              resultContainer.innerText = `Scan error: ${err}`;
-            });
-        });
-      });
+    ).catch(err => {
+      resultElement.innerText = "Camera start failed: " + err;
     });
-  </script></body>
+  </script>
+</body>
 </html>
