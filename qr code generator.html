@@ -1,79 +1,126 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QR Code Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QR Code Generator - 0xR3D</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #121212;
+      font-family: 'Poppins', sans-serif;
+      background-color: #0d0d0d;
       color: #fff;
-      text-align: center;
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
     }
+
     h1 {
-      text-shadow: 0 0 5px #aaa;
+      font-size: 2rem;
+      color: #00ffcc;
+      text-shadow: 0 0 5px #00ffcc;
+      margin-bottom: 20px;
     }
-    input, textarea, button {
-      margin: 10px;
-      padding: 10px;
-      border-radius: 5px;
+
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      padding: 30px 20px;
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.1);
+      max-width: 350px;
+      width: 100%;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
       border: none;
-      font-size: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 1rem;
+      background-color: #1a1a1a;
+      color: #00ffcc;
+      box-shadow: inset 0 0 5px rgba(0,255,204,0.4);
     }
-    input, textarea {
-      width: 300px;
-    }
+
     button {
-      background-color: #03dac6;
+      background-color: #00ffcc;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 1rem;
       color: #000;
-      cursor: pointer;
       font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin: 5px;
     }
-    canvas {
+
+    button:hover {
+      background-color: #00ccaa;
+    }
+
+    #qrcode {
       margin-top: 20px;
     }
-    label {
-      text-shadow: 0 0 5px #aaa;
+
+    footer {
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    #downloadBtn {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h1>QR Code Generator</h1><label for="text">Enter Text or URL:</label><br />
+  <div class="container">
+    <h1>QR Code Generator</h1>
+    <input type="text" id="text" placeholder="Enter your text or link"/>
+    <button onclick="generateQRCode()">Generate</button>
+    <button id="downloadBtn" onclick="downloadQR()">Download</button>
+    <div id="qrcode"></div>
+  </div>
 
-  <textarea id="text" rows="4"></textarea><br /><label for="file">Or Upload File:</label><br /> <input type="file" id="file" /><br />
+  <footer>
+    &copy; 2025 0xR3D | Secure your digital world
+  </footer>
 
-<button onclick="generateQRCode()">Generate QR</button>
-
-<canvas id="qrcode"></canvas>
-
-  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>  <script>
+  <script>
     function generateQRCode() {
-      const textInput = document.getElementById("text").value.trim();
-      const fileInput = document.getElementById("file").files[0];
-      const qr = new QRious({
-        element: document.getElementById("qrcode"),
-        size: 250,
-        value: ""
-      });
+      const text = document.getElementById("text").value;
+      const qrcodeContainer = document.getElementById("qrcode");
+      const downloadBtn = document.getElementById("downloadBtn");
+      qrcodeContainer.innerHTML = "";
+      downloadBtn.style.display = "none";
 
-      if (fileInput) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          qr.value = e.target.result;
-        };
-        reader.readAsDataURL(fileInput);
-      } else if (textInput) {
-        qr.value = textInput;
-      } else {
-        alert("Please enter text or upload a file.");
+      if (text.trim() !== "") {
+        QRCode.toCanvas(text, { width: 200, color: { dark: "#00ffcc", light: "#0d0d0d" } }, function (err, canvas) {
+          if (err) return console.error(err);
+          qrcodeContainer.appendChild(canvas);
+          canvas.id = "qrCanvas";
+          downloadBtn.style.display = "inline-block";
+        });
       }
     }
-  </script></body>
+
+    function downloadQR() {
+      const canvas = document.getElementById("qrCanvas");
+      const link = document.createElement("a");
+      link.download = "qr-code.png";
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
 </html>
