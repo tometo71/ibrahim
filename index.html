@@ -156,12 +156,83 @@
     <a href="tools.html" class="btn">Tools</a>
   </section>
 
-  <section id="visitor-info">
+  <section id="visitor-info" style="background: #000; color: #00ffcc; padding: 20px; border-radius: 10px; font-family: monospace; box-shadow: 0 0 10px #00ffcc; max-width: 700px; margin: auto;">
     <h2>Visitor Info</h2>
     <p><strong>IP:</strong> <span id="ip">Loading...</span></p>
     <p><strong>Device:</strong> <span id="device">Loading...</span></p>
     <p><strong>Browser:</strong> <span id="browser">Loading...</span></p>
-  </section>
+    <p><strong>RAM:</strong> <span id="ram">Loading...</span></p>
+    <p><strong>CPU Cores:</strong> <span id="cpu">Loading...</span></p>
+    <p><strong>Screen:</strong> <span id="screen">Loading...</span></p>
+    <p><strong>Location:</strong> <span id="location">Loading...</span></p>
+    <p><strong>Battery:</strong> <span id="battery">Loading...</span></p>
+</section>
+
+<script>
+  // IP
+  fetch('https://api.ipify.org?format=json')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('ip').textContent = data.ip;
+    })
+    .catch(() => {
+      document.getElementById('ip').textContent = 'Unavailable';
+    });
+
+  // Device & Browser
+  const ua = navigator.userAgent;
+  let device = /android/i.test(ua) ? "Android" :
+               /iPhone|iPad|iPod/i.test(ua) ? "iOS" :
+               /Windows/i.test(ua) ? "Windows PC" :
+               /Macintosh/i.test(ua) ? "Mac" :
+               /Linux/i.test(ua) ? "Linux" : "Unknown";
+
+  let browser = ua.includes("Chrome") ? "Chrome" :
+                ua.includes("Firefox") ? "Firefox" :
+                (ua.includes("Safari") && !ua.includes("Chrome")) ? "Safari" :
+                (ua.includes("MSIE") || ua.includes("Trident")) ? "Internet Explorer" : "Unknown";
+
+  document.getElementById('device').textContent = device;
+  document.getElementById('browser').textContent = browser;
+
+  // RAM & CPU
+  document.getElementById('ram').textContent = navigator.deviceMemory ? navigator.deviceMemory + " GB" : "Unknown";
+  document.getElementById('cpu').textContent = navigator.hardwareConcurrency || "Unknown";
+
+  // Screen
+  document.getElementById('screen').textContent = `${screen.width}x${screen.height}`;
+
+  // Location
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const lat = pos.coords.latitude.toFixed(4);
+        const lon = pos.coords.longitude.toFixed(4);
+        document.getElementById('location').textContent = `Latitude: ${lat}, Longitude: ${lon}`;
+      },
+      () => document.getElementById('location').textContent = "Permission Denied"
+    );
+  } else {
+    document.getElementById('location').textContent = "Not Supported";
+  }
+
+  // Battery
+  if (navigator.getBattery) {
+    navigator.getBattery().then(battery => {
+      const updateBatteryInfo = () => {
+        const level = Math.round(battery.level * 100);
+        const charging = battery.charging ? "Charging" : "Not Charging";
+        const time = battery.chargingTime !== Infinity ? `, Full in ${Math.round(battery.chargingTime / 60)} mins` : '';
+        document.getElementById('battery').textContent = `${level}% - ${charging}${time}`;
+      };
+      updateBatteryInfo();
+      battery.addEventListener('chargingchange', updateBatteryInfo);
+      battery.addEventListener('levelchange', updateBatteryInfo);
+    });
+  } else {
+    document.getElementById('battery').textContent = "Not Supported";
+  }
+</script>
 
 <section id=Bomber>
   <a href="bomber.html" class="btn">BOMBER</a>
